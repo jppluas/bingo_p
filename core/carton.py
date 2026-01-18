@@ -7,14 +7,17 @@ class Carton:
         self.id = identificador
         self.idioma = identificador[:2]
 
-        # 🔴 Normalizamos TODAS las palabras al cargar el cartón
+        # palabras originales (para UI)
+        self.palabras_originales = palabras
+
+        # palabras normalizadas (para lógica)
         self.palabras = set(normalizar(p) for p in palabras)
 
         self.marcadas = set()
         self.pendientes = len(self.palabras)
 
     def marcar_palabra(self, palabra):
-        palabra = normalizar(palabra)  # 🔴 normalizamos entrada
+        palabra = normalizar(palabra)
 
         if palabra in self.palabras and palabra not in self.marcadas:
             self.marcadas.add(palabra)
