@@ -6,7 +6,7 @@
 Su objetivo es ayudar a una persona que juega con **muchos cartones simultáneamente**, permitiéndole verificar de forma **rápida, confiable y en tiempo real** si las palabras anunciadas corresponden a alguno de sus cartones.
 
 La aplicación **NO administra el bingo**, **NO genera palabras**, ni **controla a otros jugadores**.  
-Únicamente actúa como **herramienta de soporte para un solo concursante**.
+Únicamente actúa como **herramienta de soporte para un solo concursante**, simulando el comportamiento real de un bingo.
 
 ---
 
@@ -14,20 +14,20 @@ La aplicación **NO administra el bingo**, **NO genera palabras**, ni **controla
 
 La solución combina varias estrategias de diseño de algoritmos, según la naturaleza de cada tarea:
 
-- **Fuerza Bruta**  
+- **Fuerza Bruta**
   - Lectura de vocabularios
   - Carga de cartones
-  - Comparación directa de palabras  
-  (el tamaño del problema está acotado)
+  - Comparación directa de palabras anunciadas  
+  *(el tamaño del problema está acotado)*
 
-- **Divide y Vencerás**  
+- **Divide y Vencerás**
   - Organización lógica por idioma
-  - Cada ronda procesa solo un subconjunto independiente
+  - Cada ronda procesa únicamente los cartones correspondientes al idioma activo
 
-- **Estrategia Voraz**  
-  - Marcado inmediato de palabras
-  - Verificación instantánea de bingo
-  - Finalización temprana de la ronda al detectar ganador
+- **Estrategia Voraz**
+  - Marcado inmediato de palabras anunciadas
+  - Verificación instantánea de cartones completos
+  - Finalización temprana de la ronda al detectar un bingo
 
 Estas decisiones permiten un sistema **eficiente, claro y fácil de mantener**, sin sobreingeniería.
 
@@ -35,14 +35,14 @@ Estas decisiones permiten un sistema **eficiente, claro y fácil de mantener**, 
 
 ## 🖥️ Interfaz Gráfica (UI)
 
-La interfaz gráfica está implementada en **Python con Tkinter + ttkbootstrap**, manteniendo una **separación total entre lógica y presentación**.
+La interfaz gráfica está implementada en **Python con Tkinter + ttkbootstrap**, manteniendo una **separación total entre la lógica del sistema y la presentación visual**.
 
 ### 🔹 Características clave de la UI
 
 - Una **única ventana**
 - **Zona dinámica superior** (contenido de la ronda)
 - **Log fijo en la parte inferior**, siempre visible
-- Flujo guiado, sin entradas por consola
+- Flujo guiado, sin uso de consola
 - Autocompletado de palabras por idioma
 - Manejo completo de errores de entrada
 
@@ -61,6 +61,8 @@ La interfaz gráfica está implementada en **Python con Tkinter + ttkbootstrap**
 
 El idioma actual se muestra como **título principal** de la ventana.
 
+Además, existe un botón en el encabezado que permite **saltar directamente a una nueva ronda**, sin necesidad de que ocurra un bingo (útil para pruebas).
+
 ---
 
 ### 2️⃣ Carga de cartones
@@ -76,12 +78,12 @@ ID palabra1 palabra2 palabra3 ...
 
 ```
 - Validaciones:
-- El número de palabras debe coincidir con el idioma
+- El número de palabras debe coincidir con el idioma de la ronda
 - Las tablas inválidas se ignoran
 - Se informa en el log:
-  - Total procesadas
-  - Cuántas válidas
-  - Cuántas inválidas y por qué
+  - Total de tablas procesadas
+  - Cuántas fueron válidas
+  - Cuántas fueron inválidas y el motivo
 
 #### ✍️ Ingreso manual
 - Se generan automáticamente **N campos de texto**, según el idioma
@@ -100,28 +102,33 @@ Una vez cargados los cartones:
 Durante la ronda:
 
 - Se muestra un campo de texto con botón **“Anunciar”**
-- El usuario ingresa las palabras que van siendo anunciadas en el bingo real
-- Existe **autocompletado por idioma**, usando el vocabulario completo
-- Al seleccionar una sugerencia, se completa el campo automáticamente
+- El usuario ingresa manualmente las palabras que van siendo anunciadas en el bingo real
+- Existe **autocompletado por idioma**, usando el vocabulario completo del idioma
+- Al seleccionar una sugerencia, el campo se completa automáticamente
 
 Cada palabra anunciada:
 - Se marca de forma inmediata en los cartones
-- Se verifica si alguno ha completado todas sus palabras
+- Se verifica si alguno de ellos ha completado todas sus palabras
 
-El sistema **NO muestra mensajes innecesarios** por cada palabra.  
+El sistema **no muestra mensajes innecesarios** por cada palabra.  
 Solo reacciona cuando ocurre un evento relevante.
 
 ---
 
 ### 4️⃣ Detección de Bingo
 
-Cuando uno o más cartones completan todas sus palabras:
+Cuando uno o más cartones han tenido **todas sus palabras anunciadas**:
 
 - Se detecta el **BINGO de forma inmediata**
-- Se muestra una vista de resultado con:
+- La sección de ronda se oculta
+- Se muestra un **panel de resultado** en el mismo espacio, con:
 - Mensaje de bingo
 - Identificador del cartón ganador
-- Aparece el botón:
+- Visualización de las palabras del cartón ganador
+- Las palabras anunciadas aparecen marcadas visualmente
+
+En esta vista aparece el botón:
+
 **“Otra siguiente ronda”**
 
 ---
@@ -149,8 +156,9 @@ El log informa:
 - Errores de validación
 - Palabras anunciadas
 - Detección de bingo
+- Cambios de ronda
 
-Para fines de prueba, el log también puede mostrar las **palabras ganadoras de la ronda**, marcadas como información de depuración.
+El log sirve como **registro de eventos y apoyo visual** durante el juego.
 
 ---
 
@@ -209,13 +217,13 @@ python ui/app.py
 ## 🎓 Nota académica
 
 La interfaz gráfica **no altera la lógica del sistema**.
-Todo el procesamiento sigue siendo realizado por el core, respetando las estrategias de diseño de algoritmos analizadas:
+Todo el procesamiento sigue siendo realizado por el **core**, respetando las estrategias de diseño de algoritmos analizadas:
 
 * Fuerza Bruta
 * Divide y Vencerás
 * Estrategia Voraz
 
-La UI actúa únicamente como **capa de presentación**, validación y experiencia de usuario.
+La UI actúa únicamente como **capa de presentación, validación y experiencia de usuario**.
 
 ---
 

@@ -50,9 +50,9 @@ class PanelRonda(ttk.Labelframe):
         # Crear ronda
         self.ronda = RondaBingo(
             self.app.estado.idioma,
-            self.app.estado.cartones,
-            PALABRAS_GANADORAS[self.app.estado.idioma]
+            self.app.estado.cartones
         )
+
 
         # Cargar vocabulario REAL del idioma
         ruta_vocab = os.path.join(
@@ -106,11 +106,19 @@ class PanelRonda(ttk.Labelframe):
 
         if ganadores:
             self.app.log("🎉 BINGO DETECTADO")
-            self.app.estado.ganadores = ganadores
-            self.disable()
 
-            # PASO 4 (resultado)
+            # Ocultar panel de ronda
+            self.pack_forget()
+
             from ui.panel_resultado import PanelResultado
-            self.app.panel_resultado = PanelResultado(self.app, self.app)
-            self.app.panel_resultado.mostrar()
+            ganador = ganadores[0]
+
+            self.app.panel_resultado = PanelResultado(
+                self.master,
+                self.app,
+                ganador
+            )
+            self.app.panel_resultado.pack(fill=X, pady=10)
+
+
 

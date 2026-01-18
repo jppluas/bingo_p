@@ -1,31 +1,23 @@
 # core/ronda_bingo.py
+
 from core.normalizador import normalizar
 
+
 class RondaBingo:
-    def __init__(self, idioma, cartones, vocabulario):
+    def __init__(self, idioma, cartones):
         self.idioma = idioma
-        self.vocabulario = set(normalizar(p) for p in vocabulario)
-
-        # Divide y vencerás:
-        # Solo cartones del idioma de la ronda
-        self.cartones = [
-            carton for carton in cartones
-            if carton.idioma == idioma
-        ]
-
-        self.ganadores = []
+        self.cartones = cartones
+        self.anunciadas = set()
 
     def anunciar_palabra(self, palabra):
-        """
-        Turno del juego (estrategia voraz)
-        """
-        if palabra not in self.vocabulario:
-            return []  # palabra inválida para este idioma
+        palabra_norm = normalizar(palabra)
+        self.anunciadas.add(palabra_norm)
+
+        ganadores = []
 
         for carton in self.cartones:
-            carton.marcar_palabra(palabra)
-
+            carton.marcar_palabra(palabra_norm)
             if carton.es_ganador():
-                self.ganadores.append(carton)
+                ganadores.append(carton)
 
-        return self.ganadores
+        return ganadores

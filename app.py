@@ -6,8 +6,7 @@ from ttkbootstrap.constants import *
 from ui.estado import EstadoApp
 from ui.panel_carga import PanelCarga
 from ui.panel_ronda import PanelRonda
-from ui.panel_resultado import PanelResultado
-from core.datos_prueba import PALABRAS_POR_IDIOMA, PALABRAS_GANADORAS
+from core.datos_prueba import PALABRAS_POR_IDIOMA
 
 
 class App(ttk.Window):
@@ -28,11 +27,22 @@ class App(ttk.Window):
         self.container.pack(fill=BOTH, expand=True)
 
         # ================= TÍTULO =================
+        titulo_frame = ttk.Frame(self.container)
+        titulo_frame.pack(side=TOP, fill=X, pady=5)
+
         self.titulo = ttk.Label(
-            self.container,
+            titulo_frame,
             font=("Arial", 20, "bold")
         )
-        self.titulo.pack(side=TOP, pady=5)
+        self.titulo.pack(side=LEFT, padx=10)
+
+        ttk.Button(
+            titulo_frame,
+            text="⏭ Siguiente ronda",
+            bootstyle=SUCCESS,
+            command=self.iniciar_ronda
+        ).pack(side=RIGHT, padx=10)
+
 
         # ================= ZONA DINÁMICA (ARRIBA) =================
         self.frame_principal = ttk.Frame(self.container, padding=10)
@@ -97,11 +107,6 @@ class App(ttk.Window):
         self.log("🔁 Nueva ronda iniciada")
         self.log(f"✔ Idioma seleccionado automáticamente: {idioma}")
         self.log(f"✔ Palabras por cartón: {self.estado.n_palabras}")
-
-        # DEBUG: palabras ganadoras (solo para pruebas)
-        self.log("🔎 Palabras ganadoras de esta ronda (DEBUG):")
-        for palabra in PALABRAS_GANADORAS[idioma]:
-            self.log(f"  • {palabra}")
 
         # Panel de carga
         self.panel_carga = PanelCarga(self.frame_principal, self)
