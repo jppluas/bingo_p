@@ -1,224 +1,231 @@
-# 🎯 Bingo_P – Asistente del Concursante
+# 🎲 Bingo_P – Asistente del Concursante
 
-**Mini Proyecto Final – Análisis de Algoritmos**
+## 📌 Descripción general
 
----
+**Bingo_P** es una aplicación diseñada como **asistente para el concursante de un bingo de palabras**.  
+Su objetivo es ayudar a una persona que juega con **muchos cartones simultáneamente**, permitiéndole verificar de forma **rápida, confiable y en tiempo real** si las palabras anunciadas corresponden a alguno de sus cartones.
 
-## 📌 Descripción general del proyecto
-
-**Bingo_P** es una aplicación diseñada como **asistente personal del concursante** en partidas de bingo con palabras, inspirado en los bingos masivos realizados durante la pandemia, donde un jugador puede tener **decenas o cientos de cartones simultáneamente**.
-
-El sistema permite al usuario:
-
-* Cargar uno o varios cartones (manual o por archivo `.txt`)
-* Seleccionar el idioma de la ronda
-* Ingresar manualmente las palabras anunciadas por el locutor
-* Marcar automáticamente coincidencias
-* Detectar de forma inmediata si uno o más cartones han completado todas sus palabras (**bingo**)
-
-El proyecto prioriza **eficiencia**, **robustez** y **claridad algorítmica**, alineándose con los objetivos del curso de **Análisis de Algoritmos**.
+La aplicación **NO administra el bingo**, **NO genera palabras**, ni **controla a otros jugadores**.  
+Únicamente actúa como **herramienta de soporte para un solo concursante**.
 
 ---
 
-## 🧠 Estrategias de diseño de algoritmos utilizadas
+## 🧠 Estrategia algorítmica
 
-La solución **no depende de una sola estrategia**, sino de la combinación de varias, aplicadas según la naturaleza de cada tarea:
+La solución combina varias estrategias de diseño de algoritmos, según la naturaleza de cada tarea:
 
-* **Fuerza Bruta**:
-  Para lectura, validación y recorrido de datos con tamaño acotado.
-* **Divide y Vencerás**:
-  Para separar y procesar únicamente los cartones del idioma activo en cada ronda.
-* **Estrategia Voraz**:
-  Para el marcado inmediato de palabras y detección temprana del bingo sin recorridos innecesarios.
+- **Fuerza Bruta**  
+  - Lectura de vocabularios
+  - Carga de cartones
+  - Comparación directa de palabras  
+  (el tamaño del problema está acotado)
 
-Estas decisiones permiten un procesamiento eficiente incluso con **más de 200 cartones**.
+- **Divide y Vencerás**  
+  - Organización lógica por idioma
+  - Cada ronda procesa solo un subconjunto independiente
+
+- **Estrategia Voraz**  
+  - Marcado inmediato de palabras
+  - Verificación instantánea de bingo
+  - Finalización temprana de la ronda al detectar ganador
+
+Estas decisiones permiten un sistema **eficiente, claro y fácil de mantener**, sin sobreingeniería.
+
+---
+
+## 🖥️ Interfaz Gráfica (UI)
+
+La interfaz gráfica está implementada en **Python con Tkinter + ttkbootstrap**, manteniendo una **separación total entre lógica y presentación**.
+
+### 🔹 Características clave de la UI
+
+- Una **única ventana**
+- **Zona dinámica superior** (contenido de la ronda)
+- **Log fijo en la parte inferior**, siempre visible
+- Flujo guiado, sin entradas por consola
+- Autocompletado de palabras por idioma
+- Manejo completo de errores de entrada
+
+---
+
+## 🔁 Flujo de funcionamiento de la UI
+
+### 1️⃣ Inicio automático de ronda
+
+- Al iniciar la aplicación, **NO se solicita al usuario elegir idioma**.
+- El sistema selecciona **automáticamente** un idioma para la ronda.
+- El idioma:
+  - No se repite dos veces seguidas
+  - Recorre los cuatro idiomas disponibles (SP, EN, PT, DT)
+  - Se reordena aleatoriamente cada ciclo completo
+
+El idioma actual se muestra como **título principal** de la ventana.
+
+---
+
+### 2️⃣ Carga de cartones
+
+Una vez iniciado el idioma de la ronda, se habilita la sección **Carga de cartones**, con dos opciones:
+
+#### 📄 Carga por archivo TXT
+- Cada línea del archivo representa un cartón
+- Formato:
+```
+
+ID palabra1 palabra2 palabra3 ...
+
+```
+- Validaciones:
+- El número de palabras debe coincidir con el idioma
+- Las tablas inválidas se ignoran
+- Se informa en el log:
+  - Total procesadas
+  - Cuántas válidas
+  - Cuántas inválidas y por qué
+
+#### ✍️ Ingreso manual
+- Se generan automáticamente **N campos de texto**, según el idioma
+- El usuario debe completar **todos los campos**
+- No se permite avanzar si falta alguna palabra
+- Al confirmar, el cartón queda cargado y listo
+
+Una vez cargados los cartones:
+- La sección de carga se **oculta**
+- Se habilita automáticamente la sección de ronda
+
+---
+
+### 3️⃣ Ronda de bingo (anuncio de palabras)
+
+Durante la ronda:
+
+- Se muestra un campo de texto con botón **“Anunciar”**
+- El usuario ingresa las palabras que van siendo anunciadas en el bingo real
+- Existe **autocompletado por idioma**, usando el vocabulario completo
+- Al seleccionar una sugerencia, se completa el campo automáticamente
+
+Cada palabra anunciada:
+- Se marca de forma inmediata en los cartones
+- Se verifica si alguno ha completado todas sus palabras
+
+El sistema **NO muestra mensajes innecesarios** por cada palabra.  
+Solo reacciona cuando ocurre un evento relevante.
+
+---
+
+### 4️⃣ Detección de Bingo
+
+Cuando uno o más cartones completan todas sus palabras:
+
+- Se detecta el **BINGO de forma inmediata**
+- Se muestra una vista de resultado con:
+- Mensaje de bingo
+- Identificador del cartón ganador
+- Aparece el botón:
+**“Otra siguiente ronda”**
+
+---
+
+### 5️⃣ Nueva ronda
+
+Al presionar **“Otra siguiente ronda”**:
+
+- El panel de resultado se oculta
+- Se reinicia el estado de la ronda
+- Se selecciona automáticamente un **nuevo idioma**
+- El flujo vuelve al paso de carga de cartones
+
+La aplicación puede ejecutarse de forma continua durante múltiples rondas.
+
+---
+
+## 📋 Log del sistema
+
+En la parte inferior de la ventana existe un **log fijo**, que nunca desaparece.
+
+El log informa:
+- Idioma seleccionado automáticamente
+- Estado de carga de cartones
+- Errores de validación
+- Palabras anunciadas
+- Detección de bingo
+
+Para fines de prueba, el log también puede mostrar las **palabras ganadoras de la ronda**, marcadas como información de depuración.
 
 ---
 
 ## 📂 Estructura del proyecto
 
 ```
-Bingo_P/
-│
-├── main.py
-│
-├── core/
+
+bingo_p/
+├── core/              # Lógica del sistema (algoritmos)
 │   ├── carton.py
 │   ├── ronda_bingo.py
-│   ├── normalizador.py
-│   ├── datos_prueba.py
 │   ├── lector_txt.py
-│   ├── carga_cartones.py
-│   └── flujo_ronda.py
+│   ├── vocabulario.py
+│   ├── normalizador.py
+│   └── datos_prueba.py
 │
-└── data/
-    └── vocabularios/
+├── ui/                # Interfaz gráfica
+│   ├── app.py
+│   ├── estado.py
+│   ├── panel_carga.py
+│   ├── panel_ronda.py
+│   └── panel_resultado.py
+│
+├── data/
+│   └── vocabularios/
+│       ├── SP.txt
+│       ├── EN.txt
+│       ├── PT.txt
+│       └── DT.txt
+│
+└── README.md
+
+````
+
+---
+
+## 🚀 Ejecución
+
+### Requisitos
+- Python 3.10+
+- ttkbootstrap
+
+Instalación:
+```bash
+pip install ttkbootstrap
+````
+
+Ejecución:
+
+```bash
+python ui/app.py
 ```
 
 ---
 
-## 🧩 Rol y estrategia de cada archivo
+## 🎓 Nota académica
 
-### 🔹 `main.py` – Orquestador del sistema
+La interfaz gráfica **no altera la lógica del sistema**.
+Todo el procesamiento sigue siendo realizado por el core, respetando las estrategias de diseño de algoritmos analizadas:
 
-* **Responsabilidad**: coordinar el flujo general del programa.
-* **NO implementa lógica de negocio**.
-* Llama a funciones del core para:
+* Fuerza Bruta
+* Divide y Vencerás
+* Estrategia Voraz
 
-  * Seleccionar idioma
-  * Cargar cartones
-  * Iniciar la ronda
-
-**Estrategia**:
-No aplica una estrategia algorítmica directa, actúa como controlador.
+La UI actúa únicamente como **capa de presentación**, validación y experiencia de usuario.
 
 ---
 
-### 🔹 `core/carton.py` – Modelo de cartón
+## 👥 Autores
 
-* Representa un cartón de bingo.
-* Almacena palabras como `set` para búsqueda O(1).
-* Mantiene un contador de palabras pendientes.
+**Grupo 6**
 
-**Estrategia**:
-
-* **Voraz**: cada palabra marcada es definitiva.
-* **Optimización de tiempo**: evita recorrer el cartón completo.
-
----
-
-### 🔹 `core/ronda_bingo.py` – Lógica de la ronda
-
-* Procesa únicamente los cartones del idioma activo.
-* Marca palabras y verifica ganadores inmediatamente.
-
-**Estrategias**:
-
-* **Divide y vencerás**: reduce el conjunto de cartones por idioma.
-* **Voraz**: termina la ronda tan pronto se detecta bingo.
-
----
-
-### 🔹 `core/lector_txt.py` – Lectura de archivos por lote
-
-* Lee archivos `.txt` donde cada línea representa un cartón.
-* Valida cantidad exacta de palabras por idioma.
-* Ignora líneas inválidas y registra errores.
-
-**Estrategia**:
-
-* **Fuerza bruta**: recorrido lineal del archivo.
-* Manejo robusto de errores sin abortar el programa.
-
----
-
-### 🔹 `core/carga_cartones.py` – Gestión de entrada de cartones
-
-* Permite elegir entre:
-
-  * Ingreso manual
-  * Carga por lote
-* Implementa reintentos hasta obtener al menos un cartón válido.
-
-**Estrategia**:
-
-* **Fuerza bruta** + validación.
-* Control de flujo y robustez ante errores de usuario.
-
----
-
-### 🔹 `core/flujo_ronda.py` – Ejecución interactiva de la ronda
-
-* Recibe palabras anunciadas por el usuario.
-* Normaliza la entrada.
-* Llama a la lógica de la ronda y detecta bingo.
-
-**Estrategia**:
-
-* **Voraz**: cada palabra se procesa inmediatamente.
-* UX realista: solo se notifica cuando hay bingo.
-
----
-
-### 🔹 `core/normalizador.py` – Normalización lingüística
-
-* Convierte palabras a minúsculas.
-* Elimina tildes y acentos.
-* Garantiza comparaciones correctas entre idiomas.
-
-**Estrategia**:
-
-* Preprocesamiento eficiente.
-* Mejora robustez sin afectar complejidad.
-
----
-
-### 🔹 `core/datos_prueba.py` – Configuración y pruebas
-
-* Define:
-
-  * Cantidad de palabras por idioma
-  * Palabras ganadoras de prueba
-* Facilita pruebas controladas y reproducibles.
-
----
-
-## ⚙️ Robustez y manejo de errores
-
-El sistema garantiza que:
-
-* ❌ No se cae ante errores de entrada
-* 🔁 Reintenta cuando el archivo no es válido
-* ⚠️ Informa errores al usuario sin abortar
-* ✅ Solo inicia una ronda si existe al menos un cartón válido
-
-Esto simula condiciones reales de uso y mejora la experiencia del usuario.
-
----
-
-## 🚀 Siguientes pasos: migración a interfaz gráfica (GUI)
-
-La arquitectura actual **ya está preparada** para una interfaz gráfica.
-No es necesario modificar la lógica del core.
-
-### 🔜 Paso 1 – Crear módulo `ui/`
+* Steven Lino I.
+* Erick Murillo
+* Juan Pablo Plúas
+* Leonel Cabrera
 
 ```
-ui/
-└── interfaz.py
-```
-
-### 🔜 Paso 2 – Reemplazar `input()` por componentes gráficos
-
-* Selección de idioma → `RadioButton` o `OptionMenu`
-* Carga de archivos → `FileDialog`
-* Ingreso de palabras → `Entry`
-* Mensajes → `Label` / `MessageBox`
-
-### 🔜 Paso 3 – Reutilizar el core sin cambios
-
-La UI solo debe llamar a:
-
-* `cargar_cartones()`
-* `ejecutar_ronda()`
-* Métodos de `RondaBingo` y `Carton`
-
-### 🔜 Paso 4 – Mostrar cartones ganadores
-
-* Usar un `Grid` para representar las palabras
-* Cambiar color de palabras marcadas
-* Navegar entre múltiples cartones ganadores si existen
-
----
-
-## ✅ Conclusión
-
-La solución implementada para **Bingo_P**:
-
-* Cumple completamente con las especificaciones del proyecto
-* Aplica correctamente las estrategias de diseño de algoritmos analizadas
-* Es eficiente en tiempo y memoria
-* Es robusta ante errores de entrada
-* Está lista para evolucionar a una interfaz gráfica
-
-El enfoque modular facilita la comprensión, mantenimiento y defensa académica del proyecto.

@@ -111,5 +111,6 @@ class PanelRonda(ttk.Labelframe):
 
             # PASO 4 (resultado)
             from ui.panel_resultado import PanelResultado
-            self.app.panel_resultado = PanelResultado(self.app, self.app.estado)
+            self.app.panel_resultado = PanelResultado(self.app, self.app)
             self.app.panel_resultado.mostrar()
+
